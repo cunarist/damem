@@ -1,6 +1,6 @@
 # damem
 
-damem tells agents to manage your project memory and skills files without branding them.
+`damem` tells agents to manage your project memory and skills files without branding them.
 
 This tiny CLI tool aims to be platform-agnostic and agent-agnostic.
 
@@ -15,9 +15,9 @@ Run [`damem recall`](https://github.com/cunarist/damem/releases) in the terminal
 ## What it does
 
 `.agents/` holds plain Markdown that any coding agent can read: what the project
-knows, what it can do, and where to put scratch files. damem creates that
-directory, tells agents how to keep it, and reports when it drifts. It never
-owns the files. Delete damem and every file still works.
+knows, what it can do, and where to put scratch files. `damem` tells agents how
+to keep that directory, and reports when it drifts. It never owns the files, and
+never writes one. Delete `damem` and everything there still works.
 
 ```
 .agents/
@@ -87,7 +87,7 @@ suggestion, marked `→`, never fails the check.
 
 ## Notes
 
-The files are yours. damem never writes anything, anywhere. Every file under
+The files are yours. `damem` never writes anything, anywhere. Every file under
 `.agents/` was written by an agent, in Markdown, reviewable in a normal diff.
 
 `recall` tells agents that `.agents/` is theirs to edit and that everything
@@ -95,7 +95,7 @@ outside it needs your approval, so a session that learns something writes it
 down instead of rewriting your code.
 
 Skill scripts are Python 3.12 or newer so they run on any operating system.
-That is a convention `recall` states, not something damem enforces.
+That is a convention `recall` states, not something `damem` enforces.
 
 Output is colored for a terminal and plain everywhere else, so
 `damem recall > context.md` and piping into an agent both give clean Markdown.
@@ -103,6 +103,6 @@ Output is colored for a terminal and plain everywhere else, so
 Reading is sequential and stays out of the way: 500 memories take about 110 ms,
 2000 take about 300 ms.
 
-`recall` is not magic. It prints instructions and the two index files. The value
-is that every agent working in the repository gets the same instructions and the
-same context, instead of each one keeping its own private store.
+`recall` is not magic. It prints instructions and a listing. The value is that
+every agent working in the repository gets the same instructions and the same
+context, instead of each one keeping its own private store.
