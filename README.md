@@ -45,10 +45,12 @@ Early load tests deadlocked SQLite at eight writers. Postgres held.
 ## Use
 
 ```sh
-damem init      # create .agents/{memory,skills,tmp}
 damem recall    # print how to manage .agents/, and what every file describes
 damem doctor    # report anything inconsistent
 ```
+
+Two commands, both read-only. There is nothing to set up: `recall` tells the
+agent to create `.agents/` and everything under it as the work calls for it.
 
 `recall` ends with the current listing, so an agent knows what exists before it
 opens anything:
@@ -70,14 +72,13 @@ opens anything:
 ✗ .agents/memory/db-choice.md: no `description` in its frontmatter
 ✗ .agents/memory/db-choice.md: links to `[[api-style]]`, which is not a memory here
 ✗ .agents/skills/lint/SKILL.md: missing; every skill directory needs one
-✗ .agents/tmp/.gitignore: missing; run `damem init`
+✗ .agents/tmp/.gitignore: missing; it should hold `*`
 ```
 
 ## Notes
 
-The files are yours. damem writes only during `init`, and even then it never
-overwrites a file that already exists. Everything after that is written by the
-agent, in Markdown, reviewable in a normal diff.
+The files are yours. damem never writes anything, anywhere. Every file under
+`.agents/` was written by an agent, in Markdown, reviewable in a normal diff.
 
 `recall` tells agents that `.agents/` is theirs to edit and that everything
 outside it needs your approval, so a session that learns something writes it

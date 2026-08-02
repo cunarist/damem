@@ -1,6 +1,6 @@
 # damem
 
-A Rust CLI. Three commands: `init`, `recall`, `doctor`.
+A Rust CLI. Two commands, `recall` and `doctor`, both read-only.
 
 Run `damem recall` before you start working, and `damem doctor` before you finish.
 

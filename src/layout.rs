@@ -24,18 +24,6 @@ impl Layout {
     Ok(Self::new(root))
   }
 
-  /// Like [`Self::discover`], but fails when `.agents` is missing.
-  pub fn discover_initialized() -> Result<Self> {
-    let layout = Self::discover()?;
-    if layout.agents_dir().is_dir() {
-      Ok(layout)
-    } else {
-      Err(Error::NotInitialized {
-        root: layout.root.clone(),
-      })
-    }
-  }
-
   pub fn root(&self) -> &Path {
     &self.root
   }

@@ -2,7 +2,8 @@
 
 This project keeps durable context in `.agents/`. The files there are plain
 Markdown owned by the project, not by any one agent. Read them and edit them
-directly, the same way you edit source files.
+directly, the same way you edit source files. Create the directories and files
+below yourself when they are missing; damem only reads.
 
 There is no index to maintain. Every file describes itself in its frontmatter,
 and `damem recall` collects those descriptions into the listing below.
@@ -60,7 +61,11 @@ obvious.
 ## `.agents/tmp/` — scratch space
 
 Anything not worth committing: intermediate output, downloaded data, drafts.
-It is already git-ignored. Never keep memories or skills here.
+Never keep memories or skills here. The directory holds a `.gitignore` that
+keeps its contents out of the repository, so create one when it is missing:
+
+    *
+    !.gitignore
 
 ## Before you finish
 

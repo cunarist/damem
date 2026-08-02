@@ -2,7 +2,6 @@ mod doctor;
 mod entries;
 mod error;
 mod frontmatter;
-mod init;
 mod layout;
 mod markdown;
 mod recall;
@@ -18,13 +17,14 @@ damem tells agents to manage your project memory and skills without branding the
 Usage: damem <command>
 
 Commands:
-  init     Create .agents/{memory,skills,tmp} in this project
   recall   Print how to manage .agents/, and what every file there describes
   doctor   Report anything inconsistent in .agents/
 
 Options:
   -h, --help       Print this help
   -V, --version    Print the version
+
+damem never writes to your project. The agent creates the files.
 ";
 
 fn main() -> ExitCode {
@@ -53,10 +53,9 @@ fn run() -> Result<ExitCode> {
   match command.as_str() {
     "-h" | "--help" | "help" => print!("{HELP}"),
     "-V" | "--version" => println!("damem {}", env!("CARGO_PKG_VERSION")),
-    "init" => init::run(&Layout::discover()?)?,
-    "recall" => recall::run(&Layout::discover_initialized()?)?,
+    "recall" => recall::run(&Layout::discover()?)?,
     "doctor" => {
-      if !doctor::run(&Layout::discover_initialized()?)? {
+      if !doctor::run(&Layout::discover()?)? {
         return Ok(ExitCode::FAILURE);
       }
     }

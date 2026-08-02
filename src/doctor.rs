@@ -45,14 +45,20 @@ fn check_tmp(layout: &Layout, problems: &mut Vec<Problem>) -> Result<()> {
   let gitignore = layout.tmp_gitignore();
   let name = rel(layout, &gitignore);
   if !gitignore.exists() {
-    problems.push(Problem::new(name, "missing; run `damem init`"));
+    // Only worth reporting once the directory it guards is actually in use.
+    if layout.tmp_dir().is_dir() {
+      problems.push(Problem::new(name, "missing; it should hold `*`"));
+    }
     return Ok(());
   }
   if !fs::read_to_string(&gitignore)?
     .lines()
     .any(|line| line.trim() == "*")
   {
-    problems.push(Problem::new(name, "does not ignore the directory contents"));
+    problems.push(Problem::new(
+      name,
+      "does not ignore the directory contents; it should hold `*`",
+    ));
   }
   Ok(())
 }
