@@ -30,6 +30,9 @@ knows, what it can do, and where to put scratch files.
 It never owns the files, and never writes one. Delete `damem` and everything
 there still works.
 
+The rules ship with the binary, so each repository holds only the short pointer
+above, and upgrading `damem` updates every repository at once.
+
 ```
 .agents/
   memory/
