@@ -19,12 +19,14 @@ follow from what you just learned. damem itself never writes outside `.agents/`.
 
 One fact per file, named after the fact:
 
-    ---
-    description: Postgres over SQLite, for concurrent writes
-    ---
+```markdown
+---
+description: Postgres over SQLite, for concurrent writes
+---
 
-    Early load tests deadlocked SQLite at eight writers. Postgres held.
-    Migrations live in `db/migrations`.
+Early load tests deadlocked SQLite at eight writers. Postgres held.
+Migrations live in `db/migrations`.
+```
 
 The description is one line, and it is what other agents see before they open
 the file. Make it say the fact, not the topic: "Postgres over SQLite, for
@@ -48,19 +50,22 @@ Three moments deserve a memory even when you are not sure:
 
 Keep the directory flat. A memory in a subdirectory is not listed, so nobody
 reads it. Before adding a file, look through the listing for one that already
-covers the topic and update that instead. Delete memories that turn out to be wrong. Link
-related memories with `[[db-choice]]`, using the file name without `.md`.
+covers the topic and update that instead. Delete memories that turn out to be
+wrong. Link related memories with `[[db-choice]]`, using the file name without
+`.md`.
 
 ## `.agents/skills/` — what the project can do
 
 One skill per subdirectory, each with a `SKILL.md`:
 
-    ---
-    name: lint
-    description: Run ruff and fix what it reports, before every commit
-    ---
+```markdown
+---
+name: lint
+description: Run ruff and fix what it reports, before every commit
+---
 
-    Run `python lint.py --fix`. It exits non-zero when something is left.
+Run `python lint.py --fix`. It exits non-zero when something is left.
+```
 
 The description says when to reach for the skill; the body says how to run it.
 Keep helper files in the same directory as the skill that uses them.
@@ -87,8 +92,10 @@ Anything not worth committing: intermediate output, downloaded data, drafts.
 Never keep memories or skills here. The directory holds a `.gitignore` that
 keeps its contents out of the repository, so create one when it is missing:
 
-    *
-    !.gitignore
+```gitignore
+*
+!.gitignore
+```
 
 ## Before you finish
 
