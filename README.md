@@ -2,15 +2,23 @@
 
 damem tells agents to manage your project memory and skills files without branding them.
 
-This tool aims to be platform-agnostic and agent-agnostic.
+This tiny CLI tool aims to be platform-agnostic and agent-agnostic.
 
 ## Quickstart
 
 Add below to your `AGENTS.md`
 
 ```markdown
-Run [`damem recall`](https://github.com/cunarist/damem/releases) in the terminal before starting any session.
+Run `damem recall` in the terminal before starting any session. If the command
+is not found, install it first:
+
+- macOS and Linux: `curl -fsSL https://raw.githubusercontent.com/cunarist/damem/main/install.sh | sh`
+- Windows: `irm https://raw.githubusercontent.com/cunarist/damem/main/install.ps1 | iex`
 ```
+
+The installer puts one binary on your `PATH` and nothing else. Or take it from
+[Releases](https://github.com/cunarist/damem/releases), or build it with
+`cargo install --git https://github.com/cunarist/damem`.
 
 ## What it does
 
@@ -41,19 +49,6 @@ description: Postgres over SQLite, for concurrent writes
 
 Early load tests deadlocked SQLite at eight writers. Postgres held.
 ```
-
-## Install
-
-Download the binary for your platform from
-[Releases](https://github.com/cunarist/damem/releases) and put it on your `PATH`.
-
-```sh
-# Linux and macOS
-curl -fsSL https://github.com/cunarist/damem/releases/latest/download/damem-aarch64-apple-darwin.tar.gz \
-  | tar xz --strip-components=1 -C /usr/local/bin damem-aarch64-apple-darwin/damem
-```
-
-Or build it yourself with `cargo install --git https://github.com/cunarist/damem`.
 
 ## Use
 
