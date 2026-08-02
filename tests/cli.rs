@@ -47,6 +47,9 @@ impl Project {
     Command::new(env!("CARGO_BIN_EXE_damem"))
       .arg(command)
       .current_dir(&self.dir)
+      // Detection must not depend on whoever is running the tests.
+      .env("HOME", &self.dir)
+      .env("USERPROFILE", &self.dir)
       .output()
       .expect("run damem")
   }
@@ -159,6 +162,47 @@ fn commands_work_before_anything_exists() {
 
   let doctor = project.run("doctor");
   assert!(doctor.status.success(), "{}", stdout(&doctor));
+}
+
+#[test]
+fn doctor_suggests_a_claude_md_when_claude_is_installed() {
+  let project = Project::new("claude");
+  project.write("AGENTS.md", "Run `damem recall`.\n");
+  project.write(".claude/settings.json", "{}\n");
+
+  let output = project.run("doctor");
+  // A suggestion is not a failure.
+  assert!(output.status.success(), "{}", stdout(&output));
+  let report = stdout(&output);
+  assert!(report.contains("CLAUDE.md"), "{report}");
+  assert!(report.contains("@AGENTS.md"), "{report}");
+
+  project.write(
+    "CLAUDE.md",
+    "@AGENTS.md\n\n## Claude Code\n\nUse plan mode.\n",
+  );
+  assert!(!stdout(&project.run("doctor")).contains("CLAUDE.md"));
+}
+
+#[test]
+fn doctor_stays_quiet_about_agents_that_are_not_installed() {
+  let project = Project::new("no-agents");
+  project.write("AGENTS.md", "Run `damem recall`.\n");
+
+  let report = stdout(&project.run("doctor"));
+  assert!(!report.contains("CLAUDE.md"), "{report}");
+  assert!(!report.contains("GEMINI.md"), "{report}");
+}
+
+#[test]
+fn doctor_ignores_a_mention_of_the_import_inside_backticks() {
+  let project = Project::new("quoted");
+  project.write("AGENTS.md", "Run `damem recall`.\n");
+  project.write(".gemini/settings.json", "{}\n");
+  project.write("GEMINI.md", "Write `@./AGENTS.md` to import it.\n");
+
+  let report = stdout(&project.run("doctor"));
+  assert!(report.contains("does not import AGENTS.md"), "{report}");
 }
 
 #[test]

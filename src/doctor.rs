@@ -1,3 +1,4 @@
+use crate::agents;
 use crate::entries;
 use crate::error::{Result, display_relative, fs};
 use crate::layout::Layout;
@@ -21,7 +22,8 @@ impl Problem {
   }
 }
 
-/// Prints every problem. Returns whether `.agents/` is consistent.
+/// Prints every problem, then anything worth suggesting. Returns whether
+/// `.agents/` is consistent; suggestions do not make it fail.
 pub fn run(layout: &Layout) -> Result<bool> {
   let problems = check(layout)?;
   for problem in &problems {
@@ -29,6 +31,9 @@ pub fn run(layout: &Layout) -> Result<bool> {
   }
   if problems.is_empty() {
     println!("✓ .agents is consistent");
+  }
+  for suggestion in agents::suggestions(layout)? {
+    println!("→ {}: {}", suggestion.path, suggestion.message);
   }
   Ok(problems.is_empty())
 }

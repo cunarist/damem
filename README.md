@@ -75,6 +75,14 @@ opens anything:
 ✗ .agents/tmp/.gitignore: missing; it should hold `*`
 ```
 
+Most agents read `AGENTS.md` directly. Claude Code and Gemini CLI look for their
+own file first, so `doctor` points that out when either is installed here — as a
+suggestion, not a failure:
+
+```
+→ CLAUDE.md: missing; Claude Code does not read AGENTS.md. One line is enough: `@AGENTS.md`
+```
+
 ## Notes
 
 The files are yours. damem never writes anything, anywhere. Every file under
