@@ -6,10 +6,13 @@ Run `damem recall` before you start working, and `damem doctor` before you finis
 
 ## Rules
 
-- **Zero dependencies.** `Cargo.toml` has no `[dependencies]` section and never
-  gets one — not for argument parsing, not for YAML, not for error types. A tool
-  that agents install from a release binary has to build anywhere, in seconds,
-  with nothing to audit. If a crate seems necessary, the feature is too big.
+- Four dependencies, and adding a fifth needs a reason: `clap` for the command
+  line, `anstream` and `anstyle` for color, `thiserror` for the error type.
+  Parsing Markdown, reading files, and walking directories stay hand-written.
+- Print with `anstream::println!`, never `std::println!`. anstream drops the
+  escape codes when the output is piped, which is how `damem recall` stays clean
+  inside an agent's context.
+- Colors come from [src/style.rs](src/style.rs). No ad-hoc `\x1b[` anywhere.
 - No `unwrap`, `expect`, or `panic` outside tests. Every failure is an `Error`
   variant in [src/error.rs](src/error.rs) returned through `Result`.
 - `cargo fmt` and `cargo clippy --all-targets -- -D warnings` must both pass.

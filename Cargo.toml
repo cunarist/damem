@@ -35,3 +35,9 @@ exit = "deny"
 must_use_candidate = "allow"
 missing_errors_doc = "allow"
 missing_panics_doc = "allow"
+
+[dependencies]
+anstream = "1.0.0"
+anstyle = "1.0.14"
+clap = { version = "4.6.5", features = ["derive"] }
+thiserror = "2.0.19"

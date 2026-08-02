@@ -3,6 +3,8 @@ use crate::entries;
 use crate::error::{Result, display_relative, fs};
 use crate::layout::Layout;
 use crate::markdown;
+use crate::style;
+use anstyle::Style;
 use std::collections::BTreeSet;
 use std::path::Path;
 
@@ -26,16 +28,53 @@ impl Problem {
 /// `.agents/` is consistent; suggestions do not make it fail.
 pub fn run(layout: &Layout) -> Result<bool> {
   let problems = check(layout)?;
+  let suggestions = agents::suggestions(layout)?;
+
+  anstream::println!();
   for problem in &problems {
-    println!("✗ {}: {}", problem.path, problem.message);
+    entry(style::PROBLEM, "✗", &problem.path, &problem.message);
   }
-  if problems.is_empty() {
-    println!("✓ .agents is consistent");
+  for suggestion in &suggestions {
+    entry(
+      style::SUGGESTION,
+      "→",
+      &suggestion.path,
+      &suggestion.message,
+    );
   }
-  for suggestion in agents::suggestions(layout)? {
-    println!("→ {}: {}", suggestion.path, suggestion.message);
+  if problems.is_empty() && suggestions.is_empty() {
+    entry(style::OK, "✓", ".agents", "everything here is consistent");
   }
+  summary(problems.len(), suggestions.len());
+
   Ok(problems.is_empty())
+}
+
+/// One finding: a marked path, then the detail indented under it.
+fn entry(mark: Style, symbol: &str, path: &str, message: &str) {
+  let bold = style::PATH;
+  anstream::println!("  {mark}{symbol}{mark:#}  {bold}{path}{bold:#}");
+  anstream::println!("     {message}");
+  anstream::println!();
+}
+
+fn summary(problems: usize, suggestions: usize) {
+  if problems == 0 && suggestions == 0 {
+    return;
+  }
+  let dim = style::DIM;
+  anstream::println!(
+    "  {dim}{} problem{}, {} suggestion{}{dim:#}",
+    problems,
+    plural(problems),
+    suggestions,
+    plural(suggestions)
+  );
+  anstream::println!();
+}
+
+fn plural(count: usize) -> &'static str {
+  if count == 1 { "" } else { "s" }
 }
 
 pub fn check(layout: &Layout) -> Result<Vec<Problem>> {

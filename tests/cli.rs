@@ -210,5 +210,5 @@ fn unknown_commands_fail() {
   let project = Project::bare("unknown");
   let output = project.run("frobnicate");
   assert!(!output.status.success());
-  assert!(String::from_utf8_lossy(&output.stderr).contains("unknown command"));
+  assert!(String::from_utf8_lossy(&output.stderr).contains("unrecognized subcommand"));
 }

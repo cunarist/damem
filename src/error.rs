@@ -1,18 +1,18 @@
-use std::fmt;
 use std::io;
 use std::path::{Path, PathBuf};
+use thiserror::Error;
 
 pub type Result<T> = std::result::Result<T, Error>;
 
 /// Every way damem can fail.
-#[derive(Debug)]
+#[derive(Debug, Error)]
 pub enum Error {
   /// A filesystem operation failed, with the path it was working on.
+  #[error("{path}: {source}", path = path.display())]
   Io { path: PathBuf, source: io::Error },
   /// The current directory could not be read.
+  #[error("cannot read the current directory: {source}")]
   NoCurrentDir { source: io::Error },
-  /// The command line did not parse.
-  Usage { message: String },
 }
 
 impl Error {
@@ -20,31 +20,6 @@ impl Error {
     Self::Io {
       path: path.into(),
       source,
-    }
-  }
-
-  pub fn usage(message: impl Into<String>) -> Self {
-    Self::Usage {
-      message: message.into(),
-    }
-  }
-}
-
-impl fmt::Display for Error {
-  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-    match self {
-      Self::Io { path, source } => write!(f, "{}: {source}", path.display()),
-      Self::NoCurrentDir { source } => write!(f, "cannot read the current directory: {source}"),
-      Self::Usage { message } => write!(f, "{message}"),
-    }
-  }
-}
-
-impl std::error::Error for Error {
-  fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
-    match self {
-      Self::Io { source, .. } | Self::NoCurrentDir { source } => Some(source),
-      Self::Usage { .. } => None,
     }
   }
 }

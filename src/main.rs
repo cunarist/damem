@@ -6,47 +6,56 @@ mod frontmatter;
 mod layout;
 mod markdown;
 mod recall;
+mod style;
 
-use error::{Error, Result};
+use clap::{Parser, Subcommand};
+use error::Result;
 use layout::Layout;
-use std::env;
 use std::process::ExitCode;
 
-const HELP: &str = include_str!("templates/help.txt");
+#[derive(Debug, Parser)]
+#[command(
+  name = "damem",
+  bin_name = "damem",
+  version,
+  about = "damem tells agents to manage your project memory and skills without branding them.",
+  after_help = "damem never writes to your project. The agent creates the files.",
+  styles = style::clap_styles()
+)]
+struct Cli {
+  #[command(subcommand)]
+  command: Command,
+}
+
+#[derive(Debug, Subcommand)]
+enum Command {
+  /// Print how to manage .agents/, and what every file there describes
+  Recall,
+  /// Report anything inconsistent in .agents/
+  Doctor,
+}
 
 fn main() -> ExitCode {
   match run() {
     Ok(code) => code,
     Err(error) => {
-      eprintln!("damem: {error}");
-      if matches!(error, Error::Usage { .. }) {
-        eprintln!("try `damem --help`");
-      }
+      let red = style::PROBLEM;
+      anstream::eprintln!("{red}damem:{red:#} {error}");
       ExitCode::FAILURE
     }
   }
 }
 
 fn run() -> Result<ExitCode> {
-  let args: Vec<String> = env::args().skip(1).collect();
-  let Some(command) = args.first() else {
-    print!("{HELP}");
-    return Ok(ExitCode::SUCCESS);
-  };
-  if let Some(extra) = args.get(1) {
-    return Err(Error::usage(format!("unexpected argument `{extra}`")));
-  }
-
-  match command.as_str() {
-    "-h" | "--help" | "help" => print!("{HELP}"),
-    "-V" | "--version" => println!("damem {}", env!("CARGO_PKG_VERSION")),
-    "recall" => recall::run(&Layout::discover()?)?,
-    "doctor" => {
-      if !doctor::run(&Layout::discover()?)? {
+  let cli = Cli::parse();
+  let layout = Layout::discover()?;
+  match cli.command {
+    Command::Recall => recall::run(&layout)?,
+    Command::Doctor => {
+      if !doctor::run(&layout)? {
         return Ok(ExitCode::FAILURE);
       }
     }
-    other => return Err(Error::usage(format!("unknown command `{other}`"))),
   }
   Ok(ExitCode::SUCCESS)
 }

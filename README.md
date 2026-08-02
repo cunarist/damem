@@ -69,19 +69,21 @@ opens anything:
 `doctor` reports what an agent can fix without help:
 
 ```
-✗ .agents/memory/db-choice.md: no `description` in its frontmatter
-✗ .agents/memory/db-choice.md: links to `[[api-style]]`, which is not a memory here
-✗ .agents/skills/lint/SKILL.md: missing; every skill directory needs one
-✗ .agents/tmp/.gitignore: missing; it should hold `*`
+  ✗  .agents/memory/db-choice.md
+     no `description` in its frontmatter
+
+  ✗  .agents/skills/lint/SKILL.md
+     missing; every skill directory needs one
+
+  →  CLAUDE.md
+     missing; Claude Code does not read AGENTS.md. One line is enough: `@AGENTS.md`
+
+  2 problems, 1 suggestion
 ```
 
 Most agents read `AGENTS.md` directly. Claude Code and Gemini CLI look for their
-own file first, so `doctor` points that out when either is installed here — as a
-suggestion, not a failure:
-
-```
-→ CLAUDE.md: missing; Claude Code does not read AGENTS.md. One line is enough: `@AGENTS.md`
-```
+own file first, so `doctor` points that out when either is installed here. A
+suggestion, marked `→`, never fails the check.
 
 ## Notes
 
@@ -95,8 +97,11 @@ down instead of rewriting your code.
 Skill scripts are Python 3.12 or newer so they run on any operating system.
 That is a convention `recall` states, not something damem enforces.
 
-damem has no dependencies, and will not get any. Reading is sequential and stays
-out of the way: 500 memories take about 110 ms, 2000 take about 300 ms.
+Output is colored for a terminal and plain everywhere else, so
+`damem recall > context.md` and piping into an agent both give clean Markdown.
+
+Reading is sequential and stays out of the way: 500 memories take about 110 ms,
+2000 take about 300 ms.
 
 `recall` is not magic. It prints instructions and the two index files. The value
 is that every agent working in the repository gets the same instructions and the
