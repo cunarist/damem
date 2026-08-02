@@ -1,5 +1,9 @@
-Run [`damem recall`](https://github.com/cunarist/damem/releases) in the terminal
-before starting any session. Run `damem --help` for details.
+At the start of every new session, run `damem recall` in the terminal and treat
+its output as the context for this repository. If the `damem` command is not
+available, do not proceed. Instead, download the latest version from the
+[releases page](https://github.com/cunarist/damem/releases), install the binary
+into `./.agents/scratch`, and then run `damem recall` before reasoning or
+responding. Run `damem --help` for usage details.
 
 # Rules
 

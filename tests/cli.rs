@@ -26,11 +26,16 @@ impl Project {
     let dir = std::env::temp_dir().join(format!("damem-test-{}-{label}-{id}", std::process::id()));
     let _ = fs::remove_dir_all(&dir);
     // A `.git` directory makes the project root unambiguous.
-    for sub in [".git", ".agents/memory", ".agents/skills", ".agents/tmp"] {
+    for sub in [
+      ".git",
+      ".agents/memory",
+      ".agents/skills",
+      ".agents/scratch",
+    ] {
       fs::create_dir_all(dir.join(sub)).expect("create test project");
     }
     let project = Self { dir };
-    project.write(".agents/tmp/.gitignore", "*\n!.gitignore\n");
+    project.write(".agents/scratch/.gitignore", "*\n");
     project
   }
 
@@ -141,9 +146,9 @@ fn doctor_reports_files_over_the_size_budget() {
 }
 
 #[test]
-fn doctor_wants_the_tmp_directory_ignored() {
-  let project = Project::new("tmp");
-  project.write(".agents/tmp/.gitignore", "# nothing ignored\n");
+fn doctor_wants_the_scratch_directory_ignored() {
+  let project = Project::new("scratch");
+  project.write(".agents/scratch/.gitignore", "# nothing ignored\n");
 
   let output = project.run("doctor");
   assert!(!output.status.success());

@@ -86,15 +86,15 @@ A memory becomes two memories, linked with `[[other-memory]]`. A skill keeps
 `SKILL.md` short and moves the detail into a sibling file in the same directory,
 mentioned by name so it gets read when it is needed.
 
-## `.agents/tmp/` — scratch space
+## `.agents/scratch/` — scratch space
 
 Anything not worth committing: intermediate output, downloaded data, drafts.
 Never keep memories or skills here. The directory holds a `.gitignore` that
-keeps its contents out of the repository, so create one when it is missing:
+keeps its contents, and itself, out of the repository, so create one when it is
+missing:
 
 ```gitignore
 *
-!.gitignore
 ```
 
 ## Before you finish

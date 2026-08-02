@@ -12,11 +12,15 @@ This tiny CLI tool aims to be platform-agnostic and agent-agnostic.
 
 ## Quickstart
 
-Add the line below to your `AGENTS.md`
+Add the lines below to the top of your `AGENTS.md`
 
 ```markdown
-Run [`damem recall`](https://github.com/cunarist/damem/releases) in the terminal
-before starting any session. Run `damem --help` for details.
+At the start of every new session, run `damem recall` in the terminal and treat
+its output as the context for this repository. If the `damem` command is not
+available, do not proceed. Instead, download the latest version from the
+[releases page](https://github.com/cunarist/damem/releases), install the binary
+into `./.agents/scratch`, and then run `damem recall` before reasoning or
+responding. Run `damem --help` for usage details.
 ```
 
 ## What it does
@@ -36,7 +40,7 @@ there still works.
     release-staging/
       SKILL.md     when to use the skill and how
       upload.py    helper files live with the skill
-  tmp/
+  scratch/
     .gitignore     scratch space, already ignored
 ```
 

@@ -79,18 +79,18 @@ fn plural(count: usize) -> &'static str {
 
 pub fn check(layout: &Layout) -> Result<Vec<Problem>> {
   let mut problems = Vec::new();
-  check_tmp(layout, &mut problems)?;
+  check_scratch(layout, &mut problems)?;
   check_memory(layout, &mut problems)?;
   check_skills(layout, &mut problems)?;
   Ok(problems)
 }
 
-fn check_tmp(layout: &Layout, problems: &mut Vec<Problem>) -> Result<()> {
-  let gitignore = layout.tmp_gitignore();
+fn check_scratch(layout: &Layout, problems: &mut Vec<Problem>) -> Result<()> {
+  let gitignore = layout.scratch_gitignore();
   let name = rel(layout, &gitignore);
   if !gitignore.exists() {
     // Only worth reporting once the directory it guards is actually in use.
-    if layout.tmp_dir().is_dir() {
+    if layout.scratch_dir().is_dir() {
       problems.push(Problem::new(name, "missing; it should hold `*`"));
     }
     return Ok(());

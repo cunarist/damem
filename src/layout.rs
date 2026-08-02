@@ -40,12 +40,12 @@ impl Layout {
     self.agents_dir().join("skills")
   }
 
-  pub fn tmp_dir(&self) -> PathBuf {
-    self.agents_dir().join("tmp")
+  pub fn scratch_dir(&self) -> PathBuf {
+    self.agents_dir().join("scratch")
   }
 
-  pub fn tmp_gitignore(&self) -> PathBuf {
-    self.tmp_dir().join(".gitignore")
+  pub fn scratch_gitignore(&self) -> PathBuf {
+    self.scratch_dir().join(".gitignore")
   }
 }
 
