@@ -10,15 +10,19 @@ Add below to your `AGENTS.md`
 
 ```markdown
 Run `damem recall` in the terminal before starting any session. If the command
-is not found, install it first:
+is not found, download the archive for this machine and put the binary on the
+PATH. Every release has one archive per platform:
 
-- macOS and Linux: `curl -fsSL https://raw.githubusercontent.com/cunarist/damem/main/install.sh | sh`
-- Windows: `irm https://raw.githubusercontent.com/cunarist/damem/main/install.ps1 | iex`
+    https://github.com/cunarist/damem/releases/latest/download/damem-<target>.tar.gz
+    https://github.com/cunarist/damem/releases/latest/download/damem-<target>.zip   # Windows
+
+    x86_64-unknown-linux-musl   aarch64-unknown-linux-gnu
+    x86_64-apple-darwin         aarch64-apple-darwin
+    x86_64-pc-windows-msvc      aarch64-pc-windows-msvc
 ```
 
-The installer puts one binary on your `PATH` and nothing else. Or take it from
-[Releases](https://github.com/cunarist/damem/releases), or build it with
-`cargo install --git https://github.com/cunarist/damem`.
+One binary, no runtime, nothing else installed. `cargo install --git
+https://github.com/cunarist/damem` works too.
 
 ## What it does
 
