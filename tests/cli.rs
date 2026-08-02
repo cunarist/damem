@@ -123,6 +123,24 @@ fn doctor_reports_memories_that_recall_cannot_list() {
 }
 
 #[test]
+fn doctor_reports_files_over_the_size_budget() {
+  let project = Project::new("size");
+  let padding = "x".repeat(9000);
+  project.write(
+    ".agents/memory/db-choice.md",
+    &format!("{API_STYLE}{padding}"),
+  );
+
+  let output = project.run("doctor");
+  assert!(!output.status.success());
+  assert!(
+    stdout(&output).contains("over the 8 KB budget"),
+    "{}",
+    stdout(&output)
+  );
+}
+
+#[test]
 fn doctor_wants_the_tmp_directory_ignored() {
   let project = Project::new("tmp");
   project.write(".agents/tmp/.gitignore", "# nothing ignored\n");

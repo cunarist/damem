@@ -35,6 +35,17 @@ a decision and the reason behind it, a constraint, a preference the user stated,
 a fact about an external system. Do not write down what the code, the tests, or
 the git history already say.
 
+Three moments deserve a memory even when you are not sure:
+
+- The user is annoyed, repeats a correction, or says a thing matters. Whatever
+  you just got wrong will be got wrong again next session unless it is written
+  down. Record the rule, not the apology.
+- The user states a preference in passing. It is cheaper to write it now than to
+  rediscover it from their reaction later.
+- You worked out how something fits together by reading a lot of files: the
+  layout of a subsystem, what calls what, why a module is split the way it is.
+  One paragraph here saves the next session that whole search.
+
 Keep the directory flat. A memory in a subdirectory is not listed, so nobody
 reads it. Before adding a file, look through the listing for one that already
 covers the topic and update that instead. Delete memories that turn out to be wrong. Link
@@ -58,6 +69,17 @@ Write skill scripts in Python 3.12 or newer so they run on any operating system.
 Annotate every function with modern type hints (`list[str]`, `str | None`,
 `type Row = dict[str, int]`), and comment anything the code does not make
 obvious.
+
+## Keep every file under 8 KB
+
+That is the budget for one memory and for one `SKILL.md`. A file near it is
+usually restating itself: cut the second telling of the same point, the
+background nobody needs, the example that repeats the previous example.
+
+If it is still too long after cutting, it holds more than one thing. Split it.
+A memory becomes two memories, linked with `[[other-memory]]`. A skill keeps
+`SKILL.md` short and moves the detail into a sibling file in the same directory,
+mentioned by name so it gets read when it is needed.
 
 ## `.agents/tmp/` — scratch space
 

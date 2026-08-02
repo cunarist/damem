@@ -122,6 +122,7 @@ fn check_memory(layout: &Layout, problems: &mut Vec<Problem>) -> Result<()> {
         "no `description` in its frontmatter",
       ));
     }
+    check_size(layout, &entry.path, problems);
     // Wiki links can point anywhere in the body, so this needs the whole file.
     let text = markdown::strip_comments(&fs::read_to_string(&entry.path)?);
     for link in markdown::wiki_links(&text) {
@@ -161,6 +162,7 @@ fn check_skills(layout: &Layout, problems: &mut Vec<Problem>) -> Result<()> {
         "no `description` in its frontmatter",
       ));
     }
+    check_size(layout, &entry.path, problems);
   }
 
   let dir = layout.skills_dir();
@@ -176,6 +178,22 @@ fn check_skills(layout: &Layout, problems: &mut Vec<Problem>) -> Result<()> {
     }
   }
   Ok(())
+}
+
+/// What one memory or one `SKILL.md` may cost the next agent to read.
+const SIZE_BUDGET: u64 = 8 * 1024;
+
+/// A file over budget is holding more than one thing, or saying it twice.
+fn check_size(layout: &Layout, path: &Path, problems: &mut Vec<Problem>) {
+  let Ok(size) = path.metadata().map(|meta| meta.len()) else {
+    return;
+  };
+  if size > SIZE_BUDGET {
+    problems.push(Problem::new(
+      rel(layout, path),
+      format!("{size} bytes, over the 8 KB budget; compact it, then split it"),
+    ));
+  }
 }
 
 /// Anything in the memory directory that `recall` cannot list: subdirectories,
