@@ -1,10 +1,7 @@
-# damem
+Run [`damem recall`](https://github.com/cunarist/damem/releases) in the terminal
+before starting any session. Run `damem --help` for details.
 
-A Rust CLI. Two commands, `recall` and `doctor`, both read-only.
-
-Run `damem recall` before you start working, and `damem doctor` before you finish.
-
-## Rules
+# Rules
 
 - Four dependencies, and adding a fifth needs a reason: `clap` for the command
   line, `anstream` and `anstyle` for color, `thiserror` for the error type.
