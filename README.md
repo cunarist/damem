@@ -17,10 +17,8 @@ Add the lines below to the top of your `AGENTS.md`
 ```markdown
 At the start of every new session, run `damem recall` in the terminal and treat
 its output as the context for this repository. If the `damem` command is not
-available, do not proceed. Instead, download the latest version from the
-[releases page](https://github.com/cunarist/damem/releases), install the binary
-into `./.agents/scratch`, and then run `damem recall` before reasoning or
-responding. Run `damem --help` for usage details.
+found, read [INSTALL.md](https://github.com/cunarist/damem/blob/main/INSTALL.md)
+and follow it before reasoning or responding.
 ```
 
 ## What it does
