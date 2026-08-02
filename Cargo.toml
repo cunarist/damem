@@ -10,8 +10,6 @@ readme = "README.md"
 keywords = ["agent", "memory", "skills", "llm", "context"]
 categories = ["command-line-utilities", "development-tools"]
 
-[dependencies]
-
 [profile.release]
 opt-level = "z"
 lto = true

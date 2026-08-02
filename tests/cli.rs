@@ -60,20 +60,28 @@ fn exists(path: &Path) -> bool {
   path.exists()
 }
 
+const DB_CHOICE: &str =
+  "---\ndescription: Postgres over SQLite, for concurrent writes\n---\n\nSee [[api-style]].\n";
+const API_STYLE: &str = "---\ndescription: Errors are typed, never strings\n---\n";
+const LINT_SKILL: &str = "---\nname: lint\ndescription: Run ruff before every commit\n---\n\nRun `python lint.py --fix`.\n";
+
 #[test]
 fn init_creates_the_layout_and_is_idempotent() {
   let project = Project::new("init");
   assert!(project.run("init").status.success());
-  assert!(exists(&project.path(".agents/memory/MEMORY.md")));
-  assert!(exists(&project.path(".agents/skills/SKILLS.md")));
+  assert!(exists(&project.path(".agents/memory")));
+  assert!(exists(&project.path(".agents/skills")));
   assert!(exists(&project.path(".agents/tmp/.gitignore")));
+  // No index files: every entry describes itself in its frontmatter.
+  assert!(!exists(&project.path(".agents/memory/MEMORY.md")));
+  assert!(!exists(&project.path(".agents/skills/SKILLS.md")));
 
-  project.write(".agents/memory/MEMORY.md", "# Memory\n\nedited by hand\n");
+  project.write(".agents/tmp/.gitignore", "*\n!keep.txt\n");
   let second = project.run("init");
   assert!(second.status.success());
   assert!(stdout(&second).contains("kept"));
-  let kept = fs::read_to_string(project.path(".agents/memory/MEMORY.md")).expect("read index");
-  assert!(kept.contains("edited by hand"));
+  let kept = fs::read_to_string(project.path(".agents/tmp/.gitignore")).expect("read gitignore");
+  assert!(kept.contains("!keep.txt"));
 }
 
 #[test]
@@ -86,48 +94,63 @@ fn doctor_passes_on_a_fresh_project() {
 }
 
 #[test]
-fn doctor_reports_unlisted_and_dangling_files() {
+fn doctor_accepts_frontmatter_and_wiki_links() {
+  let project = Project::new("linked");
+  assert!(project.run("init").status.success());
+  project.write(".agents/memory/db-choice.md", DB_CHOICE);
+  project.write(".agents/memory/api-style.md", API_STYLE);
+  project.write(".agents/skills/lint/SKILL.md", LINT_SKILL);
+
+  let output = project.run("doctor");
+  assert!(output.status.success(), "{}", stdout(&output));
+}
+
+#[test]
+fn doctor_reports_missing_descriptions_and_dangling_links() {
   let project = Project::new("dirty");
   assert!(project.run("init").status.success());
   project.write(
     ".agents/memory/db-choice.md",
-    "Postgres, for concurrent writes.\n",
-  );
-  project.write(
-    ".agents/memory/MEMORY.md",
-    "# Memory\n\n- [Missing](api-style.md) — gone\n",
+    "Postgres. See [[api-style]].\n",
   );
   project.write(".agents/skills/lint/notes.md", "no SKILL.md here\n");
 
   let output = project.run("doctor");
   assert!(!output.status.success());
   let report = stdout(&output);
-  assert!(report.contains("api-style.md"), "{report}");
-  assert!(report.contains("db-choice.md"), "{report}");
-  assert!(report.contains("missing SKILL.md"), "{report}");
+  assert!(report.contains("no `description`"), "{report}");
+  assert!(report.contains("[[api-style]]"), "{report}");
+  assert!(report.contains("skills/lint/SKILL.md"), "{report}");
 }
 
 #[test]
-fn doctor_accepts_a_listed_skill_and_wiki_links() {
-  let project = Project::new("linked");
+fn recall_lists_what_each_file_describes() {
+  let project = Project::new("recall");
   assert!(project.run("init").status.success());
-  project.write(
-    ".agents/memory/db-choice.md",
-    "Postgres. See [[api-style]].\n",
-  );
-  project.write(".agents/memory/api-style.md", "Errors are typed.\n");
-  project.write(
-    ".agents/memory/MEMORY.md",
-    "# Memory\n\n- [Postgres](db-choice.md) — writes\n- [Errors](api-style.md) — typed\n",
-  );
-  project.write(".agents/skills/lint/SKILL.md", "Run the linter.\n");
-  project.write(
-    ".agents/skills/SKILLS.md",
-    "# Skills\n\n- [Lint](lint/SKILL.md) — run it\n",
-  );
+  project.write(".agents/memory/db-choice.md", DB_CHOICE);
+  project.write(".agents/memory/api-style.md", API_STYLE);
+  project.write(".agents/skills/lint/SKILL.md", LINT_SKILL);
 
-  let output = project.run("doctor");
-  assert!(output.status.success(), "{}", stdout(&output));
+  let output = project.run("recall");
+  assert!(output.status.success());
+  let report = stdout(&output);
+  assert!(
+    report.contains("`db-choice.md` — Postgres over SQLite"),
+    "{report}"
+  );
+  assert!(
+    report.contains("`lint/` — Run ruff before every commit"),
+    "{report}"
+  );
+}
+
+#[test]
+fn recall_says_when_nothing_is_stored_yet() {
+  let project = Project::new("empty");
+  assert!(project.run("init").status.success());
+  let output = project.run("recall");
+  assert!(output.status.success());
+  assert_eq!(stdout(&output).matches("Empty so far.").count(), 2);
 }
 
 #[test]

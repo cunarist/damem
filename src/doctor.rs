@@ -1,3 +1,4 @@
+use crate::entries;
 use crate::error::{Result, display_relative, fs};
 use crate::layout::Layout;
 use crate::markdown;
@@ -58,42 +59,67 @@ fn check_tmp(layout: &Layout, problems: &mut Vec<Problem>) -> Result<()> {
 
 fn check_memory(layout: &Layout, problems: &mut Vec<Problem>) -> Result<()> {
   let dir = layout.memory_dir();
-  let index = layout.memory_index();
-  let index_name = rel(layout, &index);
-  if !index.exists() {
-    problems.push(Problem::new(index_name, "missing; run `damem init`"));
-    return Ok(());
-  }
+  let memories = entries::memories(layout)?;
+  let names: BTreeSet<&str> = memories
+    .iter()
+    .filter_map(|entry| entry.name.strip_suffix(".md"))
+    .collect();
 
-  let files = markdown_files(&dir, "MEMORY.md")?;
-  let body = markdown::strip_comments(&fs::read_to_string(&index)?);
-  let listed = listed_targets(&body);
-
-  for target in &listed {
-    if !dir.join(target).exists() {
+  for entry in &memories {
+    if entry.description.is_none() {
       problems.push(Problem::new(
-        &index_name,
-        format!("links to `{target}`, which does not exist"),
+        rel(layout, &entry.path),
+        "no `description` in its frontmatter",
       ));
     }
-  }
-  for file in &files {
-    if !listed.contains(file) {
-      problems.push(Problem::new(
-        rel(layout, &dir.join(file)),
-        format!("not listed in {index_name}"),
-      ));
+    // Wiki links can point anywhere in the body, so this needs the whole file.
+    let text = markdown::strip_comments(&fs::read_to_string(&entry.path)?);
+    for link in markdown::wiki_links(&text) {
+      if !names.contains(link.as_str()) {
+        problems.push(Problem::new(
+          rel(layout, &entry.path),
+          format!("links to `[[{link}]]`, which is not a memory here"),
+        ));
+      }
     }
   }
 
-  for file in &files {
-    let path = dir.join(file);
-    let text = markdown::strip_comments(&fs::read_to_string(&path)?);
-    for name in markdown::wiki_links(&text) {
-      if !dir.join(format!("{name}.md")).exists() {
+  if dir.is_dir() {
+    for path in stray_files(&dir)? {
+      problems.push(Problem::new(
+        rel(layout, &path),
+        "not a Markdown file; memories are `.md`",
+      ));
+    }
+  }
+  Ok(())
+}
+
+fn check_skills(layout: &Layout, problems: &mut Vec<Problem>) -> Result<()> {
+  for entry in entries::skills(layout)? {
+    if !entry.path.is_file() {
+      problems.push(Problem::new(
+        rel(layout, &entry.path),
+        "missing; every skill directory needs one",
+      ));
+      continue;
+    }
+    if entry.description.is_none() {
+      problems.push(Problem::new(
+        rel(layout, &entry.path),
+        "no `description` in its frontmatter",
+      ));
+    }
+  }
+
+  let dir = layout.skills_dir();
+  if dir.is_dir() {
+    for path in fs::read_dir_sorted(&dir)? {
+      let path = path.path();
+      if path.is_file() {
         problems.push(Problem::new(
           rel(layout, &path),
-          format!("links to `[[{name}]]`, which does not exist"),
+          "not a skill directory; each skill is a folder with a SKILL.md",
         ));
       }
     }
@@ -101,90 +127,16 @@ fn check_memory(layout: &Layout, problems: &mut Vec<Problem>) -> Result<()> {
   Ok(())
 }
 
-fn check_skills(layout: &Layout, problems: &mut Vec<Problem>) -> Result<()> {
-  let dir = layout.skills_dir();
-  let index = layout.skills_index();
-  let index_name = rel(layout, &index);
-  if !index.exists() {
-    problems.push(Problem::new(index_name, "missing; run `damem init`"));
-    return Ok(());
-  }
-
-  let mut skills = BTreeSet::new();
-  for entry in fs::read_dir_sorted(&dir)? {
-    let path = entry.path();
-    if !path.is_dir() {
-      continue;
-    }
-    let Some(name) = file_name(&path) else {
-      continue;
-    };
-    if !path.join("SKILL.md").exists() {
-      problems.push(Problem::new(rel(layout, &path), "missing SKILL.md"));
-    }
-    skills.insert(name);
-  }
-
-  let body = markdown::strip_comments(&fs::read_to_string(&index)?);
-  let listed: BTreeSet<String> = listed_targets(&body)
-    .iter()
-    .filter_map(|target| target.split('/').next().map(str::to_owned))
-    .collect();
-
-  for name in &listed {
-    if !skills.contains(name) {
-      problems.push(Problem::new(
-        &index_name,
-        format!("links to `{name}`, which is not a skill directory"),
-      ));
-    }
-  }
-  for name in &skills {
-    if !listed.contains(name) {
-      problems.push(Problem::new(
-        rel(layout, &dir.join(name)),
-        format!("not listed in {index_name}"),
-      ));
-    }
-  }
-  Ok(())
-}
-
-/// Link targets inside the project, with `./` and backslashes normalized away.
-fn listed_targets(body: &str) -> BTreeSet<String> {
-  markdown::link_targets(body)
-    .iter()
-    .filter(|target| !markdown::is_external(target))
-    .map(|target| {
-      target
-        .replace('\\', "/")
-        .trim_start_matches("./")
-        .to_owned()
-    })
-    .collect()
-}
-
-fn markdown_files(dir: &Path, skip: &str) -> Result<BTreeSet<String>> {
-  let mut files = BTreeSet::new();
+/// Files in the memory directory that are not Markdown.
+fn stray_files(dir: &Path) -> Result<Vec<std::path::PathBuf>> {
+  let mut stray = Vec::new();
   for entry in fs::read_dir_sorted(dir)? {
     let path = entry.path();
-    if path.is_dir() || path.extension().is_none_or(|ext| ext != "md") {
-      continue;
-    }
-    match file_name(&path) {
-      Some(name) if name != skip => {
-        files.insert(name);
-      }
-      _ => {}
+    if path.is_file() && path.extension().is_none_or(|ext| ext != "md") {
+      stray.push(path);
     }
   }
-  Ok(files)
-}
-
-fn file_name(path: &Path) -> Option<String> {
-  path
-    .file_name()
-    .map(|name| name.to_string_lossy().into_owned())
+  Ok(stray)
 }
 
 fn rel(layout: &Layout, path: &Path) -> String {

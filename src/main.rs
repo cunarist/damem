@@ -1,5 +1,7 @@
 mod doctor;
+mod entries;
 mod error;
+mod frontmatter;
 mod init;
 mod layout;
 mod markdown;
@@ -17,7 +19,7 @@ Usage: damem <command>
 
 Commands:
   init     Create .agents/{memory,skills,tmp} in this project
-  recall   Print how to manage .agents/, and what is in it now
+  recall   Print how to manage .agents/, and what every file there describes
   doctor   Report anything inconsistent in .agents/
 
 Options:

@@ -56,14 +56,6 @@ impl Layout {
     self.agents_dir().join("tmp")
   }
 
-  pub fn memory_index(&self) -> PathBuf {
-    self.memory_dir().join("MEMORY.md")
-  }
-
-  pub fn skills_index(&self) -> PathBuf {
-    self.skills_dir().join("SKILLS.md")
-  }
-
   pub fn tmp_gitignore(&self) -> PathBuf {
     self.tmp_dir().join(".gitignore")
   }

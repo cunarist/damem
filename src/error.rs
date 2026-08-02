@@ -67,7 +67,17 @@ pub mod fs {
   }
 
   pub fn read_to_string(path: &Path) -> Result<String> {
-    fs::read_to_string(path).map_err(|source| Error::io(path, source))
+    let text = fs::read_to_string(path).map_err(|source| Error::io(path, source))?;
+    Ok(without_bom(text))
+  }
+
+  /// Windows editors put a byte order mark at the start of a UTF-8 file. Every
+  /// line-by-line check here would trip over it, so it goes early.
+  fn without_bom(text: String) -> String {
+    match text.strip_prefix('\u{feff}') {
+      Some(rest) => rest.to_owned(),
+      None => text,
+    }
   }
 
   /// Writes `contents` only when `path` is absent. Returns whether it wrote.
@@ -77,6 +87,23 @@ pub mod fs {
     }
     fs::write(path, contents).map_err(|source| Error::io(path, source))?;
     Ok(true)
+  }
+
+  /// Reads at most `limit` bytes from the start of `path`.
+  ///
+  /// Frontmatter sits at the top of the file, so there is no reason to read the
+  /// rest of it. Invalid UTF-8, including a multi-byte character cut off at the
+  /// limit, becomes a replacement character.
+  pub fn read_head(path: &Path, limit: usize) -> Result<String> {
+    use std::io::Read;
+
+    let file = fs::File::open(path).map_err(|source| Error::io(path, source))?;
+    let mut buffer = Vec::new();
+    file
+      .take(u64::try_from(limit).unwrap_or(u64::MAX))
+      .read_to_end(&mut buffer)
+      .map_err(|source| Error::io(path, source))?;
+    Ok(without_bom(String::from_utf8_lossy(&buffer).into_owned()))
   }
 
   /// Entries of `path`, sorted by file name. An absent directory reads as empty.

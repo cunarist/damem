@@ -1,6 +1,6 @@
-use crate::error::{Result, display_relative, fs};
+use crate::entries::{self, Entry};
+use crate::error::Result;
 use crate::layout::Layout;
-use std::path::Path;
 
 const GUIDANCE: &str = include_str!("templates/recall.md");
 
@@ -9,20 +9,26 @@ pub fn run(layout: &Layout) -> Result<()> {
   print!("{GUIDANCE}");
   println!();
   println!("---");
-  for index in [layout.memory_index(), layout.skills_index()] {
-    print_index(layout.root(), &index)?;
-  }
+  print_section("Memory", ".agents/memory/", &entries::memories(layout)?, "");
+  print_section("Skills", ".agents/skills/", &entries::skills(layout)?, "/");
   Ok(())
 }
 
-fn print_index(root: &Path, path: &Path) -> Result<()> {
+fn print_section(title: &str, dir: &str, entries: &[Entry], suffix: &str) {
   println!();
-  println!("## `{}`", display_relative(path, root));
+  println!("## {title} — `{dir}`");
   println!();
-  if path.exists() {
-    print!("{}", fs::read_to_string(path)?);
-  } else {
-    println!("Missing. Run `damem init`.");
+  if entries.is_empty() {
+    println!("Empty so far.");
+    return;
   }
-  Ok(())
+  for entry in entries {
+    match &entry.description {
+      Some(description) => println!("- `{}{suffix}` — {description}", entry.name),
+      None => println!(
+        "- `{}{suffix}` — no description in its frontmatter",
+        entry.name
+      ),
+    }
+  }
 }
