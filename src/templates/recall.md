@@ -7,6 +7,13 @@ directly, the same way you edit source files.
 There is no index to maintain. Every file describes itself in its frontmatter,
 and `damem recall` collects those descriptions into the listing below.
 
+## What you may change on your own
+
+Inside `.agents/`, create, edit, and delete files as the work calls for it.
+Outside it, nothing. Source code, configuration, `AGENTS.md`, the rest of the
+repository: ask the user before you touch any of it, even when a change would
+follow from what you just learned. damem itself never writes outside `.agents/`.
+
 ## `.agents/memory/` — what the project knows
 
 One fact per file, named after the fact:

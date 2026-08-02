@@ -9,7 +9,7 @@ This tiny CLI tool aims to be platform-agnostic and agent-agnostic.
 Add below to your `AGENTS.md`
 
 ```markdown
-Run [`damem recall`](https://github.com/cunarist/damem/releases) in the terminal before starting any session.
+Run [`damem recall`](https://github.com/cunarist/damem/releases) in the terminal before starting any session. Run `damem --help` for details.
 ```
 
 ## What it does
@@ -78,6 +78,10 @@ opens anything:
 The files are yours. damem writes only during `init`, and even then it never
 overwrites a file that already exists. Everything after that is written by the
 agent, in Markdown, reviewable in a normal diff.
+
+`recall` tells agents that `.agents/` is theirs to edit and that everything
+outside it needs your approval, so a session that learns something writes it
+down instead of rewriting your code.
 
 Skill scripts are Python 3.12 or newer so they run on any operating system.
 That is a convention `recall` states, not something damem enforces.

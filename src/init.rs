@@ -4,8 +4,10 @@ use crate::layout::Layout;
 const TMP_GITIGNORE: &str = include_str!("templates/tmp-gitignore");
 
 /// The line to paste into `AGENTS.md`.
-pub const AGENTS_SNIPPET: &str =
-  "Run `damem recall` before you start working, and `damem doctor` before you finish.";
+pub const AGENTS_SNIPPET: &str = concat!(
+  "Run [`damem recall`](https://github.com/cunarist/damem/releases) in the terminal ",
+  "before starting any session. Run `damem --help` for details."
+);
 
 /// Creates `.agents/` without touching files that already exist.
 pub fn run(layout: &Layout) -> Result<()> {
