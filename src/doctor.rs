@@ -134,13 +134,14 @@ fn check_memory(layout: &Layout, problems: &mut Vec<Problem>) -> Result<()> {
     }
   }
 
-  if dir.is_dir() {
-    for path in stray_files(&dir)? {
-      problems.push(Problem::new(
-        rel(layout, &path),
-        "not a Markdown file; memories are `.md`",
-      ));
-    }
+  for path in strays(&dir)? {
+    let message = if path.is_dir() {
+      // Nothing reads these, so they would sit there unnoticed.
+      "memories should be flat; move the files up into `.agents/memory/`"
+    } else {
+      "memories should be Markdown; give it a `.md` name or move it out"
+    };
+    problems.push(Problem::new(rel(layout, &path), message));
   }
   Ok(())
 }
@@ -177,16 +178,18 @@ fn check_skills(layout: &Layout, problems: &mut Vec<Problem>) -> Result<()> {
   Ok(())
 }
 
-/// Files in the memory directory that are not Markdown.
-fn stray_files(dir: &Path) -> Result<Vec<std::path::PathBuf>> {
-  let mut stray = Vec::new();
+/// Anything in the memory directory that `recall` cannot list: subdirectories,
+/// and files that are not Markdown.
+fn strays(dir: &Path) -> Result<Vec<std::path::PathBuf>> {
+  let mut strays = Vec::new();
   for entry in fs::read_dir_sorted(dir)? {
     let path = entry.path();
-    if path.is_file() && path.extension().is_none_or(|ext| ext != "md") {
-      stray.push(path);
+    let listed = path.is_file() && path.extension().is_some_and(|ext| ext == "md");
+    if !listed {
+      strays.push(path);
     }
   }
-  Ok(stray)
+  Ok(strays)
 }
 
 fn rel(layout: &Layout, path: &Path) -> String {

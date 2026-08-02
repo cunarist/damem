@@ -35,8 +35,9 @@ a decision and the reason behind it, a constraint, a preference the user stated,
 a fact about an external system. Do not write down what the code, the tests, or
 the git history already say.
 
-Before adding a file, look through the listing for one that already covers the
-topic and update that instead. Delete memories that turn out to be wrong. Link
+Keep the directory flat. A memory in a subdirectory is not listed, so nobody
+reads it. Before adding a file, look through the listing for one that already
+covers the topic and update that instead. Delete memories that turn out to be wrong. Link
 related memories with `[[db-choice]]`, using the file name without `.md`.
 
 ## `.agents/skills/` — what the project can do

@@ -110,6 +110,19 @@ fn doctor_reports_missing_descriptions_and_dangling_links() {
 }
 
 #[test]
+fn doctor_reports_memories_that_recall_cannot_list() {
+  let project = Project::new("strays");
+  project.write(".agents/memory/db/choice.md", API_STYLE);
+  project.write(".agents/memory/notes.txt", "not markdown\n");
+
+  let output = project.run("doctor");
+  assert!(!output.status.success());
+  let report = stdout(&output);
+  assert!(report.contains("memories should be flat"), "{report}");
+  assert!(report.contains("memories should be Markdown"), "{report}");
+}
+
+#[test]
 fn doctor_wants_the_tmp_directory_ignored() {
   let project = Project::new("tmp");
   project.write(".agents/tmp/.gitignore", "# nothing ignored\n");
