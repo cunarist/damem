@@ -12,21 +12,7 @@ use layout::Layout;
 use std::env;
 use std::process::ExitCode;
 
-const HELP: &str = "\
-damem tells agents to manage your project memory and skills without branding them.
-
-Usage: damem <command>
-
-Commands:
-  recall   Print how to manage .agents/, and what every file there describes
-  doctor   Report anything inconsistent in .agents/
-
-Options:
-  -h, --help       Print this help
-  -V, --version    Print the version
-
-damem never writes to your project. The agent creates the files.
-";
+const HELP: &str = include_str!("templates/help.txt");
 
 fn main() -> ExitCode {
   match run() {
