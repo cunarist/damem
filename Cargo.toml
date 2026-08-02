@@ -1,0 +1,39 @@
+[package]
+name = "damem"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+description = "Tells agents to manage your project memory and skills without branding them."
+repository = "https://github.com/cunarist/damem"
+license = "MIT"
+readme = "README.md"
+keywords = ["agent", "memory", "skills", "llm", "context"]
+categories = ["command-line-utilities", "development-tools"]
+
+[dependencies]
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
+
+[lints.rust]
+unsafe_code = "forbid"
+missing_debug_implementations = "warn"
+
+[lints.clippy]
+pedantic = { level = "warn", priority = -1 }
+# Panicking paths are bugs; every failure goes through `Error`.
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"
+todo = "deny"
+unimplemented = "deny"
+indexing_slicing = "deny"
+exit = "deny"
+# Noise from `pedantic` that says nothing about correctness.
+must_use_candidate = "allow"
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
