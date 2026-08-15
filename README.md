@@ -34,15 +34,17 @@ The rules ship with the binary, so each repository holds only the short pointer
 above, and upgrading `damem` updates every repository at once.
 
 ```
-.agents/
-  memory/
-    db-choice.md   one fact per file
-  skills/
-    release-staging/
-      SKILL.md     when to use the skill and how
-      upload.py    helper files live with the skill
-  scratch/
-    .gitignore     scratch space, already ignored
+<your-project>/
+├── AGENTS.md
+└── .agents/
+    ├── memory/
+    │   └── db-choice.md        one fact per file
+    ├── skills/
+    │   └── release-staging/
+    │       ├── SKILL.md        when to use the skill and how
+    │       └── upload.py       helper files live with the skill
+    └── scratch/
+        └── .gitignore          scratch space, already ignored
 ```
 
 There is no index to keep in sync. Every file describes itself, and
