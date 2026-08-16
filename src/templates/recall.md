@@ -24,8 +24,8 @@ One fact per file, named after the fact:
 description: Postgres over SQLite, for concurrent writes
 ---
 
-Early load tests deadlocked SQLite at eight writers. Postgres held.
-Migrations live in `db/migrations`.
+Early load tests deadlocked SQLite at eight writers. Postgres held. Migrations
+live in `db/migrations`.
 ```
 
 The description is one line, and it is what other agents see before they open
@@ -81,18 +81,18 @@ That is the budget for one memory and for one `SKILL.md`. A file near it is
 usually restating itself: cut the second telling of the same point, the
 background nobody needs, the example that repeats the previous example.
 
-If it is still too long after cutting, it holds more than one thing. Split it.
-A memory becomes two memories, linked with `[[other-memory]]`. A skill keeps
+If it is still too long after cutting, it holds more than one thing. Split it. A
+memory becomes two memories, linked with `[[other-memory]]`. A skill keeps
 `SKILL.md` short and moves the detail into a sibling file in the same directory,
 mentioned by name so it gets read when it is needed.
 
 ## `.agents/scratch/` — scratch space
 
-Anything not worth committing: intermediate output, downloaded data, drafts.
-Never keep memories or skills here. The directory holds a `.gitignore` that
-keeps its contents, and itself, out of the repository, so create one when it is
-missing:
-
+Session-local junk goes in whatever temporary directory your harness gives you.
+Put a file here when it must outlive the session or the user will open it:
+intermediate output, downloaded data, drafts. The directory holds a `.gitignore`
+that keeps its contents, and itself, out of the repository, so create one when
+it is missing: out of the repository, so create one when it is missing:
 ```gitignore
 *
 ```
