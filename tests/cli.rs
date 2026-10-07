@@ -201,23 +201,14 @@ fn commands_work_before_anything_exists() {
 }
 
 #[test]
-fn doctor_suggests_a_claude_md_when_claude_is_installed() {
+fn doctor_does_not_suggest_a_claude_md() {
+  // Claude Code reads AGENTS.md on its own.
   let project = Project::new("claude");
   project.write("AGENTS.md", "Run `damem recall`.\n");
   project.write(".claude/settings.json", "{}\n");
 
-  let output = project.run("doctor");
-  // A suggestion is not a failure.
-  assert!(output.status.success(), "{}", stdout(&output));
-  let report = stdout(&output);
-  assert!(report.contains("CLAUDE.md"), "{report}");
-  assert!(report.contains("@AGENTS.md"), "{report}");
-
-  project.write(
-    "CLAUDE.md",
-    "@AGENTS.md\n\n## Claude Code\n\nUse plan mode.\n",
-  );
-  assert!(!stdout(&project.run("doctor")).contains("CLAUDE.md"));
+  let report = stdout(&project.run("doctor"));
+  assert!(!report.contains("CLAUDE.md"), "{report}");
 }
 
 #[test]

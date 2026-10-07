@@ -26,20 +26,12 @@ struct Agent {
   label: &'static str,
 }
 
-const AGENTS: [Agent; 2] = [
-  Agent {
-    file: "CLAUDE.md",
-    marker: ".claude",
-    import: "@AGENTS.md",
-    label: "Claude Code",
-  },
-  Agent {
-    file: "GEMINI.md",
-    marker: ".gemini",
-    import: "@./AGENTS.md",
-    label: "Gemini CLI",
-  },
-];
+const AGENTS: [Agent; 1] = [Agent {
+  file: "GEMINI.md",
+  marker: ".gemini",
+  import: "@./AGENTS.md",
+  label: "Gemini CLI",
+}];
 
 /// Nothing to suggest until the project actually has an `AGENTS.md`.
 pub fn suggestions(layout: &Layout) -> Result<Vec<Suggestion>> {
@@ -89,8 +81,8 @@ fn home() -> Option<PathBuf> {
     .map(PathBuf::from)
 }
 
-/// An import is any `@…AGENTS.md` outside a code span, which is how both
-/// Claude Code and Gemini CLI read it.
+/// An import is any `@…AGENTS.md` outside a code span, which is how Gemini CLI
+/// reads it.
 fn imports_agents_md(path: &Path) -> Result<bool> {
   let text = fs::read_to_string(path)?;
   let mut fenced = false;
