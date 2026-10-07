@@ -48,14 +48,14 @@ mod tests {
 
   #[test]
   fn survives_unclosed_links() {
-    assert!(wiki_links("[[a").is_empty());
+    assert_eq!(wiki_links("[[a"), Vec::<String>::new());
   }
 
   #[test]
   fn drops_commented_out_examples() {
     let text = "keep\n<!-- see [[missing]] -->\ntail";
     assert_eq!(strip_comments(text), "keep\n\ntail");
-    assert!(wiki_links(&strip_comments(text)).is_empty());
+    assert_eq!(wiki_links(&strip_comments(text)), Vec::<String>::new());
     assert_eq!(strip_comments("open <!-- forever"), "open ");
   }
 }
