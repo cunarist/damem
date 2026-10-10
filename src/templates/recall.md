@@ -34,8 +34,9 @@ concurrent writes", never "notes about the database".
 
 Write a memory when something is durable and not derivable from the repository:
 a decision and the reason behind it, a constraint, a preference the user stated,
-a fact about an external system. Do not write down what the code, the tests, or
-the git history already say.
+a fact about an external system. Do not restate what a single file, test, or
+commit already says plainly; a map of where things live and how they connect is
+worth writing even though the code holds it.
 
 Three moments deserve a memory even when you are not sure:
 
@@ -99,4 +100,8 @@ it is missing: out of the repository, so create one when it is missing:
 
 ## Before you finish
 
-Run `damem doctor` and fix whatever it reports.
+Write a memory for anything you learned that is hard to understand at a glance,
+came from outside the repository, or is a decision or the intention behind one.
+Answering a question counts; you need not have changed any code.
+
+Then run `damem doctor` and fix whatever it reports.
