@@ -1,4 +1,3 @@
-mod agents;
 mod doctor;
 mod entries;
 mod error;

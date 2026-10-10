@@ -6,7 +6,6 @@
 use anstyle::{AnsiColor, Color, Style};
 
 pub const PROBLEM: Style = fg(AnsiColor::Red);
-pub const SUGGESTION: Style = fg(AnsiColor::Blue);
 pub const OK: Style = fg(AnsiColor::Green);
 pub const PATH: Style = Style::new().bold();
 pub const DIM: Style = Style::new().dimmed();
