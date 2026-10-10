@@ -1,4 +1,3 @@
-use crate::agents;
 use crate::entries;
 use crate::error::{Result, display_relative, fs};
 use crate::layout::Layout;
@@ -24,28 +23,18 @@ impl Problem {
   }
 }
 
-/// Prints every problem, then anything worth suggesting. Returns whether
-/// `.agents/` is consistent; suggestions do not make it fail.
+/// Prints every problem. Returns whether `.agents/` is consistent.
 pub fn run(layout: &Layout) -> Result<bool> {
   let problems = check(layout)?;
-  let suggestions = agents::suggestions(layout)?;
 
   anstream::println!();
   for problem in &problems {
     entry(style::PROBLEM, "✗", &problem.path, &problem.message);
   }
-  for suggestion in &suggestions {
-    entry(
-      style::SUGGESTION,
-      "→",
-      &suggestion.path,
-      &suggestion.message,
-    );
-  }
-  if problems.is_empty() && suggestions.is_empty() {
+  if problems.is_empty() {
     entry(style::OK, "✓", ".agents", "everything here is consistent");
   }
-  summary(problems.len(), suggestions.len());
+  summary(problems.len());
 
   Ok(problems.is_empty())
 }
@@ -58,18 +47,12 @@ fn entry(mark: Style, symbol: &str, path: &str, message: &str) {
   anstream::println!();
 }
 
-fn summary(problems: usize, suggestions: usize) {
-  if problems == 0 && suggestions == 0 {
+fn summary(problems: usize) {
+  if problems == 0 {
     return;
   }
   let dim = style::DIM;
-  anstream::println!(
-    "  {dim}{} problem{}, {} suggestion{}{dim:#}",
-    problems,
-    plural(problems),
-    suggestions,
-    plural(suggestions)
-  );
+  anstream::println!("  {dim}{} problem{}{dim:#}", problems, plural(problems));
   anstream::println!();
 }
 

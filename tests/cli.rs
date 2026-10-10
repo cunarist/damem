@@ -201,38 +201,6 @@ fn commands_work_before_anything_exists() {
 }
 
 #[test]
-fn doctor_does_not_suggest_a_claude_md() {
-  // Claude Code reads AGENTS.md on its own.
-  let project = Project::new("claude");
-  project.write("AGENTS.md", "Run `damem recall`.\n");
-  project.write(".claude/settings.json", "{}\n");
-
-  let report = stdout(&project.run("doctor"));
-  assert!(!report.contains("CLAUDE.md"), "{report}");
-}
-
-#[test]
-fn doctor_stays_quiet_about_agents_that_are_not_installed() {
-  let project = Project::new("no-agents");
-  project.write("AGENTS.md", "Run `damem recall`.\n");
-
-  let report = stdout(&project.run("doctor"));
-  assert!(!report.contains("CLAUDE.md"), "{report}");
-  assert!(!report.contains("GEMINI.md"), "{report}");
-}
-
-#[test]
-fn doctor_ignores_a_mention_of_the_import_inside_backticks() {
-  let project = Project::new("quoted");
-  project.write("AGENTS.md", "Run `damem recall`.\n");
-  project.write(".gemini/settings.json", "{}\n");
-  project.write("GEMINI.md", "Write `@./AGENTS.md` to import it.\n");
-
-  let report = stdout(&project.run("doctor"));
-  assert!(report.contains("does not import AGENTS.md"), "{report}");
-}
-
-#[test]
 fn unknown_commands_fail() {
   let project = Project::bare("unknown");
   let output = project.run("frobnicate");
