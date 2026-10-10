@@ -1,4 +1,4 @@
-"""Bump damem's version, or tag the version that landed on main."""
+"""Bump damem's version, or publish a GitHub release for what landed on main."""
 
 import re
 import subprocess
@@ -26,10 +26,10 @@ def bump(version: str) -> None:
     run("cargo", "test", "--all-targets")
     run("git", "add", "Cargo.toml", "Cargo.lock")
     run("git", "commit", "-m", f"Version {version}")
-    print(f"Committed Version {version}; push and merge the PR, then run `tag`.")
+    print(f"Committed Version {version}; push and merge the PR, then run `publish`.")
 
 
-def tag() -> None:
+def publish() -> None:
     run("git", "fetch", "--tags", "origin", "main")
     manifest = run("git", "show", "origin/main:Cargo.toml")
     match = VERSION_LINE.search(manifest)
@@ -38,19 +38,24 @@ def tag() -> None:
     name = f"v{match.group(1)}"
     if run("git", "tag", "--list", name):
         sys.exit(f"{name} already exists; bump the version first.")
-    run("git", "tag", name, "origin/main")
-    run("git", "push", "origin", name)
-    print(f"Pushed {name}; the Release workflow is building it now.")
+    commit = run("git", "rev-parse", "origin/main")
+    # Creating the release creates the tag too, and the tag push starts the
+    # Release workflow, which uploads binaries to this same release page.
+    url = run(
+        "gh", "release", "create", name,
+        "--target", commit, "--title", name, "--generate-notes",
+    )
+    print(f"Published {url}; the Release workflow is attaching binaries now.")
 
 
 def main(argv: list[str]) -> None:
     match argv:
         case ["bump", version] if re.fullmatch(r"\d+\.\d+\.\d+", version):
             bump(version)
-        case ["tag"]:
-            tag()
+        case ["publish"]:
+            publish()
         case _:
-            sys.exit("usage: release.py bump X.Y.Z | release.py tag")
+            sys.exit("usage: release.py bump X.Y.Z | release.py publish")
 
 
 if __name__ == "__main__":

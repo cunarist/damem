@@ -10,5 +10,5 @@ The GitHub repository only allows squash merges, so a PR's commits, including
 the version bump, land on `main` as one commit titled after the PR. CI runs
 format, lint, and tests on Ubuntu, macOS, and Windows for every PR.
 
-Run the `release` skill for both steps, including the tag that publishes
-binaries. Related: [[no-per-agent-instruction-files]].
+Run the `release` skill for both steps, including the GitHub release that
+publishes binaries. Related: [[no-per-agent-instruction-files]].
