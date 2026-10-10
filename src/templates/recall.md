@@ -100,8 +100,8 @@ it is missing: out of the repository, so create one when it is missing:
 
 ## Before you finish
 
-If you opened more than three files to find something, write a memory saying
-where it is and how the pieces connect, so the next session skips the search.
+Write a memory for anything you learned that is hard to understand at a glance,
+came from outside the repository, or is a decision or the intention behind one.
 Answering a question counts; you need not have changed any code.
 
 Then run `damem doctor` and fix whatever it reports.
