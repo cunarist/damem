@@ -1,14 +1,15 @@
 # damem
 
-`damem` tells agents how to manage your project memory and skills files in the
-code repository without branding them.
+As a tiny single-binary tool, `damem` tells agents how to manage your project
+memory and skills files in the code repository without branding them. It reads
+Markdown files from your project folder on disk.
 
 Memory of your agents such as Claude Code or Codex lives on one machine in one
 tool's format, so a new computer, a teammate's clone, or a different agent
 starts from nothing. `.agents/` is committed with the code, and whoever shows up
 next reads it.
 
-This tiny CLI tool aims to be platform-agnostic and agent-agnostic.
+It aims to be platform-agnostic and agent-agnostic.
 
 ## Quickstart
 
